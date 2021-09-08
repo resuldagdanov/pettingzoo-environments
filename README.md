@@ -1,5 +1,7 @@
 # pettingzoo-environments
-Simple Training and Evaluation of Multi-Agent Environments with Deep Reinforcement Algorithms
+Description: Simple Training and Evaluation of Multi-Agent Environments with Deep Reinforcement Algorithms.
+
+Supports Python 3.6, 3.7, 3.8, and 3.9 on Linux and macOS, however currently the Windows support is not avalable.
 
 ## The Installation of Petting-Zoo Environments
 
@@ -15,6 +17,8 @@ pip install supersuit
 Visit [Github](https://github.com/PettingZoo-Team/SuperSuit) for more details about SuperSuit.
 
 ## Environments in PettingZoo (Copied from [Github](https://github.com/PettingZoo-Team/PettingZoo))
+
+[Environments](https://www.pettingzoo.ml/envs)
 
 * [Atari](https://www.pettingzoo.ml/atari): Multi-player Atari 2600 games (cooperative, competitive and mixed sum)
 * [Butterfly](https://www.pettingzoo.ml/butterfly): Cooperative graphical games developed by us, requiring a high degree of coordination
