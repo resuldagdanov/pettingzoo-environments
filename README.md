@@ -16,6 +16,19 @@ pip install supersuit
 
 Visit [Github](https://github.com/PettingZoo-Team/SuperSuit) for more details about SuperSuit.
 
+## Stable Baselines 3 Library
+
+```python
+pip install stable-baselines3
+```
+
+## Requirements
+
+All requirements could be installed with:
+```python
+pip install -r requirements.txt
+```
+
 ## Environments in PettingZoo (Copied from [Github](https://github.com/PettingZoo-Team/PettingZoo))
 
 [Environments](https://www.pettingzoo.ml/envs)
