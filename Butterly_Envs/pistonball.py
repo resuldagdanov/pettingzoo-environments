@@ -26,12 +26,25 @@ model = PPO(CnnPolicy, env, verbose=3, gamma=0.95, n_steps=256, ent_coef=0.09051
 
 # TRAINING and SAVING
 print("\nTraining is Starting ...\n")
+
 model.learn(total_timesteps=2000)
 model.save("policy")
 
 # EVALUATING
 print("\nEvaluation is Starting ...\n")
+
 env = pistonball_v4.env()
 env = ss.color_reduction_v0(env, mode="B")
 env = ss.resize_v0(env, x_size=84, y_size=84)
 env = ss.frame_stack_v1(env, 3)
+
+# load save policy model
+model = PPO.load("policy")
+
+# run the model according to the policy with render open mode
+env.reset()
+for agent in env.agent_iter():
+   obs, reward, done, info = env.last()
+   act = model.predict(obs, deterministic=True)[0] if not done else None
+   env.step(act)
+   env.render()
