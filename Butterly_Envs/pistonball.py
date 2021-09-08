@@ -1,6 +1,23 @@
+"""
+Pistonball v4
+
+Environment Properties:
+    Actions:                Either
+    Agents:	                20
+    Parallel API:	        Yes
+    Manual Control:	        Yes
+    Action Shape:	        (1,)
+    Action Values:	        [-1, 1]
+    Observation Shape:	    (457, 120, 3)
+    Observation Values:	    [0, 255]
+    State Shape:            (560, 880, 3)
+    State Values:	        (0, 255)
+    Average Total Reward:   -91.2
+"""
+
+from pettingzoo.butterfly import pistonball_v4
 from stable_baselines3.ppo import CnnPolicy
 from stable_baselines3 import PPO
-from pettingzoo.butterfly import pistonball_v4
 import supersuit as ss
 
 env = pistonball_v4.parallel_env(n_pistons=20, local_ratio=0, time_penalty=-0.1, continuous=True,
