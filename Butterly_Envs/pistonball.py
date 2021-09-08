@@ -25,11 +25,11 @@ model = PPO(CnnPolicy, env, verbose=3, gamma=0.95, n_steps=256, ent_coef=0.09051
             n_epochs=5, clip_range=0.3, batch_size=256)
 
 # TRAINING and SAVING
-#model.learn(total_timesteps=2000000)
-#model.save("policy")
+# model.learn(total_timesteps=2000000)
+# model.save("policy")
 
 # EVALUATING
-#env = pistonball_v4.env()
-#env = ss.color_reduction_v0(env, mode="B")
-#env = ss.resize_v0(env, x_size=84, y_size=84)
-#env = ss.frame_stack_v1(env, 3)
+# env = pistonball_v4.env()
+# env = ss.color_reduction_v0(env, mode="B")
+# env = ss.resize_v0(env, x_size=84, y_size=84)
+# env = ss.frame_stack_v1(env, 3)
