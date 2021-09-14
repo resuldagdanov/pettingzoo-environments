@@ -16,24 +16,6 @@ Environment Properties:
     Average Total Reward:   2.77
 """
 
-"""
-Cooperative Pong v3
-
-Environment Properties:
-    Actions:                Discrete
-    Agents:	                2
-    Parallel API:	        Yes
-    Manual Control:	        Yes
-    Action Shape:	        Discrete(3)
-    Action Values:	        [0, 1]
-    Observation Shape:	    (280, 480, 3)
-    Observation Values:	    [0, 255]
-    Agents Agents:          ['paddle_0', 'paddle_1']
-    State Shape:            (560, 960, 3)
-    State Values:	        (0, 255)
-    Average Total Reward:   -92.9
-"""
-
 from pettingzoo.butterfly import prison_v3
 from stable_baselines3.ppo import CnnPolicy
 from stable_baselines3 import PPO

@@ -1,18 +1,19 @@
 """
-Pistonball v4
+Cooperative Pong v3
 
 Environment Properties:
-    Actions:                Either
-    Agents:	                20
+    Actions:                Discrete
+    Agents:	                2
     Parallel API:	        Yes
     Manual Control:	        Yes
-    Action Shape:	        (1,)
-    Action Values:	        [-1, 1]
-    Observation Shape:	    (457, 120, 3)
+    Action Shape:	        Discrete(3)
+    Action Values:	        [0, 1]
+    Observation Shape:	    (280, 480, 3)
     Observation Values:	    [0, 255]
-    State Shape:            (560, 880, 3)
+    Agents Agents:          ['paddle_0', 'paddle_1']
+    State Shape:            (560, 960, 3)
     State Values:	        (0, 255)
-    Average Total Reward:   -91.2
+    Average Total Reward:   -92.9
 """
 
 from ray.rllib.agents import ppo
@@ -20,24 +21,23 @@ from ray.rllib.agents.registry import get_trainer_class
 from ray.rllib.models import ModelCatalog
 from ray.tune.registry import register_env
 from ray.rllib.env.wrappers.pettingzoo_env import PettingZooEnv, ParallelPettingZooEnv
-from pettingzoo.butterfly import pistonball_v4
+from pettingzoo.butterfly import cooperative_pong_v3
 from custom_model import MLPModelV2
 from copy import deepcopy
 import supersuit
 import ray
 import os
+import pickle
 import PIL
 
 
 def create_env(args, is_parallel):
     if is_parallel:
-        env = pistonball_v4.parallel_env(n_pistons=20, local_ratio=0, time_penalty=-0.1, continuous=True,
-                                        random_drop=True, random_rotate=True, ball_mass=0.75, 
-                                        ball_friction=0.3, ball_elasticity=1.5, max_cycles=125)
+        env = cooperative_pong_v3.parallel_env(ball_speed=9, left_paddle_speed=12, right_paddle_speed=12,
+                                                cake_paddle=True, max_cycles=900, bounce_randomness=False)
     else:
-        env = pistonball_v4.env(n_pistons=20, local_ratio=0, time_penalty=-0.1, continuous=True,
-                                random_drop=True, random_rotate=True, ball_mass=0.75, 
-                                ball_friction=0.3, ball_elasticity=1.5, max_cycles=125)
+        env = cooperative_pong_v3.env(ball_speed=9, left_paddle_speed=12, right_paddle_speed=12,
+                                    cake_paddle=True, max_cycles=900, bounce_randomness=False)
 
     # convert environment to only black and white color and resize to 84x84
     env = supersuit.color_reduction_v0(env, mode='B')
@@ -69,8 +69,9 @@ if __name__ == "__main__":
     is_evaluation = True
 
     algo_name = "PPO"
-    env_name = "pistonball_v4"
-    checkpoint_path = "/home/resul/Research/PettingZoo/pettingzoo-environments/Butterfly_Envs/pistonball/parameters/checkpoint_000001/checkpoint-1"
+    env_name = "cooperative_pong_v3"
+    checkpoint_path = "/home/resul/ray_results/PPO_cooperative_pong_v3_2021-09-14_16-08-58382kevhi/checkpoint_000000/checkpoint-0"
+    params_path = "/home/resul/ray_results/PPO_cooperative_pong_v3_2021-09-14_16-08-58382kevhi/params.pkl"
 
     # register custom CNN model into the catalog
     ModelCatalog.register_custom_model("MLPModelV2", MLPModelV2)
@@ -121,6 +122,14 @@ if __name__ == "__main__":
 
     # train or evaluate
     if is_evaluation:
+
+        # load config parameters
+        with open(params_path, "rb") as f:
+            configs = pickle.load(f)
+
+            # num_workers not needed since we are not training
+            del configs['num_workers']
+            del configs['num_gpus']
 
         # define trainer algorithm
         PPOagent = ppo.PPOTrainer(env=env_name, config=configs)
@@ -180,7 +189,9 @@ if __name__ == "__main__":
         # initialize trainer object
         trainer = get_trainer_class(algo_name)(env=env_name, config=configs)
 
+
         for _ in range(100):
-            # train once
             trainer.train()
+
+            # saves the checkpoint inside /ray_results/ folder
             trainer.save()
