@@ -21,6 +21,13 @@ Visit [Github](https://github.com/PettingZoo-Team/SuperSuit) for more details ab
 ```python
 pip install stable-baselines3
 ```
+## RLLib Library
+
+```python
+pip install ray
+```
+
+Make sure that msgpack library is compatible with ray library. (tested with msgpack==0.6.0 and ray==1.6.0)
 
 ## Requirements
 
