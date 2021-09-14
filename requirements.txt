@@ -4,4 +4,11 @@ stable-baselines3==1.1.0
 torch==1.9
 tensorboard==2.4.1
 ray==1.6.0
+pygame
+ray[tune]
+pandas
+dm_tree
+supersuit
 msgpack==0.6.0
+torch
+gputil
