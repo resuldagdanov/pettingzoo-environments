@@ -12,3 +12,4 @@ supersuit
 msgpack==0.6.0
 torch
 gputil
+pymunk
