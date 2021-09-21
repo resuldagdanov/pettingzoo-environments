@@ -1,17 +1,28 @@
-import os
-import ray
-import torch
-import random
-import supersuit
-import numpy as np
-from collections import namedtuple
-from tensorboardX import SummaryWriter
+"""
+Multiwalker v7
+
+Environment Properties:
+    Actions:                Continuous
+    Agents:	                3
+    Parallel API:	        Yes
+    Manual Control:	        No
+    Action Shape:	        (4,)
+    Action Values:	        (-1, 1)
+    Observation Shape:	    (31,)
+    Observation Values:	    [-inf, inf]
+    Agents Agents:          ['walker_0', 'walker_1', 'walker_2']
+    Average Total Reward:   -300.86
+"""
+
 from pettingzoo.sisl import multiwalker_v7
 from ray import tune
 from ray.rllib.models import ModelCatalog
 from ray.tune.registry import register_env
 from ray.rllib.env.wrappers.pettingzoo_env import ParallelPettingZooEnv
 from ray.rllib.examples.models.centralized_critic_models import TorchCentralizedCriticModel
+import ray
+import random
+import os
 
 
 def env_creator(args):
@@ -32,7 +43,6 @@ def gen_policy(i):
         "gamma": 0.99,
     }
     return (None, obs_space, act_space, config)
-    #return (None, None, None, config)
 
 
 def policy_mapping_fn(agent_id, episode, **kwargs):
@@ -42,7 +52,7 @@ def policy_mapping_fn(agent_id, episode, **kwargs):
 
 if __name__ == "__main__":
     # use 1 GB of memory
-    ray.init(object_store_memory=10**9)
+    ray.init(_memory=10**9)
 
     env = ParallelPettingZooEnv(env_creator(None))
 
@@ -70,8 +80,7 @@ if __name__ == "__main__":
     }
 
     stop = {
-        #"training_iteration": 1000,
-        "timesteps_total": 100000,
+        "timesteps_total": 10000000,
     }
 
     results = tune.run("PPO", stop=stop, config=config)
