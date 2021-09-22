@@ -24,9 +24,14 @@ import ray
 import random
 import os
 
+# number of agents (default is 3)
+N_AGENTS = 3
+ALGORITHM = "PPO"
+
 
 def env_creator(args):
-    env = multiwalker_v7.parallel_env(n_walkers=3, position_noise=1e-3, angle_noise=1e-3,
+    # parallel_env will execute synchronized actions
+    env = multiwalker_v7.parallel_env(n_walkers=N_AGENTS, position_noise=1e-3, angle_noise=1e-3,
                                     local_ratio=1.0, forward_reward=1.0, terminate_reward=-100.0, fall_reward=-10.0,
                                     terminate_on_fall=True, remove_on_fall=True, max_cycles=500)
     return env
@@ -36,6 +41,7 @@ def gen_policy(i):
     obs_space = env.observation_space
     act_space = env.action_space 
 
+    # default centralized critic model is used
     config = {
         "model": {
           "custom_model": "TorchCentralizedCriticModel",
@@ -54,14 +60,16 @@ if __name__ == "__main__":
     # use 1 GB of memory
     ray.init(_memory=10**9)
 
+    # run environments in parallel
     env = ParallelPettingZooEnv(env_creator(None))
 
     ModelCatalog.register_custom_model("TorchCentralizedCriticModel", TorchCentralizedCriticModel)
 
     register_env("multi_agent_multi_walker", lambda _: env)
 
+    # different agents will have different policies
     policies = {
-        "policy_{}".format(i): gen_policy(i) for i in range(3)
+        "policy_{}".format(i): gen_policy(i) for i in range(N_AGENTS)
     }
     policy_ids = list(policies.keys())
 
@@ -79,8 +87,12 @@ if __name__ == "__main__":
         "framework": "torch",
     }
 
+    # stop when 10M frames (steps) is reached
     stop = {
         "timesteps_total": 10000000,
     }
 
-    results = tune.run("PPO", stop=stop, config=config)
+    # train the model
+    analysis = tune.run(ALGORITHM, stop=stop, config=config, checkpoint_freq=20, verbose=3)
+
+    print("Best hyperparameters found were: ", analysis.best_config)
